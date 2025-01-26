@@ -27,4 +27,3 @@ public class Database
         return rs;
     }
 }
-
