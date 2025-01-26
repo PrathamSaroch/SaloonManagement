@@ -9,7 +9,12 @@ public class UserController {
     @GetMapping("/")
     public String index()
     {
-        System.out.println("In Controller");
         return "index-3";
+    }
+    
+    @GetMapping("/UserShowSaloons")
+    public String UserShowSaloons()
+    {
+        return "UserShowSaloons";
     }
 }

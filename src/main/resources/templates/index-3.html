@@ -33,9 +33,9 @@
 
                 fetch(url, {method: "GET"})
                         .then(response => response.text())
-                        .then(ans => renderGyms(ans));
+                        .then(ans => renderCities(ans));
             }
-            function renderGyms(ans)
+            function renderCities(ans)
             {
                 ans = ans.trim();
                 var mainobj = JSON.parse(ans);
@@ -52,9 +52,9 @@
                                 <img src="myuploads/${city.cityphotos}" alt="${city.cityname}">
                             </div>
                             <div class="content">
-                                <h3 class="title"><a href="services-details.html?cityid=${city.cityid}">${city.cityname}</a></h3>
+                                <h3 class="title"><a href="UserShowSaloons?cityid=${city.cityid}">${city.cityname}</a></h3>
                                 <p class="text">${city.citydesc}</p>
-                                <a href="services-details.html?cityid=${city.cityid}" class="primary-btn">View Details</a>
+                                <a href="UserShowSaloons?cityid=${city.cityid}&cityname=${city.cityname}" class="primary-btn">Show Saloons</a>
                             </div>
                         </div>
                     </div>
@@ -74,7 +74,6 @@
 
         <!-- start header area -->
         <div th:replace="UserNavbar :: header"></div>
-
         <!-- end header area -->
 
         <!-- start home banner area -->
