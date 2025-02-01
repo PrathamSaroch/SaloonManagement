@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 import Salonique.SaloonManagement.Connection.*;
 import jakarta.servlet.annotation.MultipartConfig;
 import java.io.FileOutputStream;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
@@ -50,5 +51,12 @@ public class AdminRestController {
             ex.printStackTrace();
             return "exception";
         }
+    }
+    
+    @GetMapping("/AdminGetCities")
+    public String getcity()
+    {
+        String ans=new RDBMS_TO_JSON().generateJSON("select * from cities");
+        return ans;
     }
 }
