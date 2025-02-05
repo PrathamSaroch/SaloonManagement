@@ -17,4 +17,16 @@ public class UserController {
     {
         return "UserShowSaloons";
     }
+    
+    @GetMapping("/UserShowSaloonDetail")
+    public String UserShowSaloonDetail()
+    {
+        return "UserShowSaloonDetail";
+    }
+    
+    @GetMapping("/checkout")
+    public String Checkout()
+    {
+        return "checkout";
+    }
 }
