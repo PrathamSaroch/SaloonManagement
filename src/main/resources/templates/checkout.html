@@ -25,6 +25,13 @@
         <title>Wofy - Beauty Saloon & Spa Massage Center HTML Template</title>
         <link rel="icon" href="assets/images/favicon.png" type="image/png"/>
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        
+        
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+        <script src="js/Razorpay.js" type="text/javascript"></script>
+        <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
         <script>
             function packageInfo()
@@ -61,7 +68,7 @@
                 document.getElementById("packagedesc").innerText = saloons[0].packagedesc;
                 document.getElementById("type").innerText = saloons[0].type;
                 document.getElementById("packname").innerHTML = saloons[0].packagename + "<span></span>";
-                document.getElementById("ofpc").innerText = "RS. " + saloons[0].offerprice;
+                document.getElementById("ofpc").innerText = saloons[0].offerprice;
                 document.getElementById("pc").innerText = "RS. " + saloons[0].price;
             }
 
@@ -104,6 +111,46 @@
                             .then(ans => renderAsHtml(ans));
                 }
             }
+            
+            function online() {
+                // Get the current URL
+                const currentUrl = new URL(window.location.href);
+
+                // Extract query parameters
+                const params = new URLSearchParams(currentUrl.search);
+
+                // Access specific parameters
+                const packageid = params.get('packageid');
+                
+                var customername = document.getElementById("customername").value;
+                var customeremail = document.getElementById("customeremail").value;
+                var customeraddress = document.getElementById("customeraddress").value;
+                var bookingdate = document.getElementById("bookingdate").value;
+                var bookigntime = document.getElementById("bookigntime").value;
+
+                if (customername === "" || customeremail === "" || customeraddress === "" || bookingdate === "" || bookigntime === "") {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Please fill out all the fields!'
+                    });
+                } else {
+                    var formdata = new FormData();
+                    formdata.append("customername", customername);
+                    formdata.append("customeremail", customeremail);
+                    formdata.append("customeraddress", customeraddress);
+                    formdata.append("bookingdate", bookingdate);
+                    formdata.append("bookigntime", bookigntime);
+                    formdata.append("modeofpayment","online");
+                    formdata.append("packageid",packageid);
+
+                    var url = "./booking";
+
+                    fetch(url, {method: "POST", body: formdata})
+                            .then(response => response.text())
+                            .then(ans => renderAsHtml(ans));
+                }
+            }
 
             function  renderAsHtml(ans)
             {
@@ -136,6 +183,76 @@
                     }
             }
 
+        </script>
+        
+        <script>
+            function paymentlogic()
+            {
+                var total = document.getElementById("ofpc").innerText;
+                
+                var options = {
+                    "key": "rzp_test_96HeaVmgRvbrfT",
+                    "amount": total + "00",
+                    "name": "Project Name",
+                    "description": "",
+                    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQOmghn1er2yRA0yXfMRmroSSpWEdAGNV5KHg&usqp=CAU",
+                    "handler": function (response) {
+
+                        if (response.razorpay_payment_id === "" || response.razorpay_payment_id === undefined) {
+
+                            window.location.href = "payment_action?status=failed";
+                            // paymentfail(authormobile,"Payment failed!");
+
+                            alert("Payment Failed");
+
+                        } else {
+//success
+                            online();
+                            //payment success
+                            //call your book payment function here
+                        }
+                    },
+                    "prefill": {
+                        "name": "",
+                        "email": ""
+                    },
+                    "notes": {
+                        "address": ""
+                    },
+                    "theme": {
+                        "color": "#F37254"
+                    },
+                    "modal": {
+                        "ondismiss": function () {
+                            $("#statusmodal").modal("show");
+                            document.getElementById("status").innerHTML = "Payment failed ! Try again";
+                        }
+                    }
+                };
+
+
+
+                var rzp1 = new Razorpay(options);
+                rzp1.on('payment.failed', function (response) {
+                    console.log("a2");
+                    console.log(response.error.code);
+
+                    alert("Payment Failed");
+
+
+                    // paymentfail(authormobile,"Payment failed!");
+                    // rzp1.close();
+                    // alert(response.error.code);
+                    // alert(response.error.description);
+                    // alert(response.error.source);
+                    // alert(response.error.step);
+                    // alert(response.error.reason);
+                    // alert(response.error.metadata.order_id);
+                    // alert(response.error.metadata.payment_id);
+
+                });
+                rzp1.open();
+            }
         </script>
 
     </head>
@@ -590,7 +707,7 @@
                         </div>
                         <div class="row" >
                             <div class="col-md-6">
-                                <button class="primary-btn w-100" type="submit">
+                                <button class="primary-btn w-100" onclick="paymentlogic()" type="button">
                                     Online
                                 </button>
                             </div>
