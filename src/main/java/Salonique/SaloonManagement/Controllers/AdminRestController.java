@@ -59,4 +59,27 @@ public class AdminRestController {
         String ans=new RDBMS_TO_JSON().generateJSON("select * from cities");
         return ans;
     }
+    @PostMapping("/DeleteCity")
+    public String deleteaddedcity(@RequestParam String cid)
+    {
+        int cid1=Integer.parseInt(cid);
+        try{
+            ResultSet rs=Database.executeQuery("select * from cities where cityid='"+cid1+"'");
+            if(rs.next())
+            {
+                rs.deleteRow();
+                return "success";
+            }
+            else
+            {
+                return "fail";
+            }
+        }
+        catch(Exception ex)
+        {
+            ex.printStackTrace();
+            return "exception";
+        }
+            
+    }
 }

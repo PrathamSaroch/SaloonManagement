@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 
-    <!-- Mirrored from templates.hibootstrap.com/wofy/default/register.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 26 Jan 2025 08:45:54 GMT -->
+    <!-- Mirrored from templates.hibootstrap.com/wofy/default/product-details.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 26 Jan 2025 08:46:32 GMT -->
     <head>
         <!--=== meta tags ===-->
         <meta charset="UTF-8" />
@@ -20,158 +20,49 @@
         <link rel="stylesheet" href="assets/css/style.css" />
         <link rel="stylesheet" href="assets/css/responsive.css" />
         <link rel="stylesheet" href="assets/css/theme-dark.css" />
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
         <!--=== title & favicon ===-->
         <title>Wofy - Beauty Saloon & Spa Massage Center HTML Template</title>
         <link rel="icon" href="assets/images/favicon.png" type="image/png"/>
-        <script>
-            function enterdata()
-            {
-                var name = document.getElementById("cityname").value;
-                var desc = document.getElementById("desc").value;
-                var file = document.getElementById("photo").files[0];
-                var formdata = new FormData();
-                formdata.append("name", name);
-                formdata.append("desc", desc);
-                formdata.append("file", file);
-                var url = "./AddCity";
 
-                fetch(url, {method: "POST", body: formdata})
+        <script>
+            const urlParams = new URLSearchParams(window.location.search);
+
+            const pid = urlParams.get("pid");
+            function getdata()
+            {
+                
+                var url = "./GetPackageData";
+                var formdata=new FormData();
+                formdata.append("pid",pid);
+                fetch(url,{method:"POST" ,body : formdata})
                         .then(response => response.text())
                         .then(ans => renderAsHtml(ans));
+                
             }
             function renderAsHtml(ans)
             {
-
-
-                if (ans === "success")
+               
+                var mainobj = JSON.parse(ans);
+                var arr = mainobj["ans"];
+                for (var i = 0; i < arr.length; i++)
                 {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'City Added Successful',
-                        text: 'You have successfully Added City!!',
-                        showConfirmButton: true,
-                    });
+                    var ct = arr[i];
+                    document.getElementById("pname").value = ct.packagename;
+                    document.getElementById("desc").value = ct.packagedesc;
+                    document.getElementById("price").value = ct.price;
+                    document.getElementById("offerprice").value = ct.offerprice;
+                    document.getElementById("type1").value = ct.type;
+                   var a = `<div class="image"><img  src="myuploads/${ct.packagephoto}" alt="Demo Image"><button type="button" class="primary-btn" onclick="login()">Sign In</button></div>`;
 
-                    document.getElementById("cityname").value = "";
-                    document.getElementById("desc").value = "";
-                    document.getElementById("photo").src = "";
-
-
-                } else if (ans === "fail")
-                {
-
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'City Registration Failed',
-                        text: 'Enter the Credentials Properly!',
-                    });
-                } else if(ans === "exception")
-                {
-                    alert(ans);
+                    document.getElementById("photo5").innerHTML=  a;
+//                    document.getElementById("photo1").href = ct.packagephoto;
                 }
-
-                
-
             }
-            
-            
-            function go2() {
-
-                    var url = "/getcities";
-
-                    fetch(url)
-                            .then(response => response.text())
-                            .then(ans => renderAsHtml1(ans));
-                }
-
-                function renderAsHtml1(ans)
-                {
-
-
-
-                    //parsing of json
-                    var mainobj = JSON.parse(ans);
-                    var arr = mainobj["ans"];
-
-                    console.log(arr);
-
-
-
-                    var s = "<table class=\"table table-hover\" >";
-                    // we can fetch data in json array using for loop
-                    s += "<thead><tr><th>Category Name</th><th>Photo</th><th>Remove</th></tr></thead><tbody>";
-                    for (var i = 0; i < arr.length; i++)
-                    {
-                        var ct = arr[i];
-                        var a="myuploads/"+ct.cityphotos;
-                        s = s + "<tr>";
-
-                        s = s + "<td>" + ct.cityname + "</td>";
-                        
-                        s = s + '<td><img src="' + a + '" class=\"img-thumbnail\" height=\"100ox\" width=\"100px\" /> </td>';
-
-                        s += "<td><button class='btn btn-danger btn-sm' onclick=\"confirmDelete('" + ct.cityid + "')\">Delete</button></td>";
-
-                        s = s + "</tr>";
-                    }
-
-                    s = s + "</table>";
-
-                    document.getElementById("d1").innerHTML = s;
-                }
-                function confirmDelete(cname) {
-                    Swal.fire({
-                        title: 'Are you sure?',
-                        text: "You won't be able to revert this!",
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonColor: '#d33',
-                        cancelButtonColor: '#3085d6',
-                        confirmButtonText: 'Yes, delete it!'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            deleteCity(cname);
-                        }
-                    });
-                }
-
-                function deleteCity(cname) {
-                    var formdata = new FormData();
-                    formdata.append("cid", cname);
-                    var url = "./DeleteCity";
-
-                    fetch(url, {method: "POST", body: formdata})
-                            .then(response => response.text())
-                            .then(ans => {
-                                if (ans.trim() === 'success') {
-                                    Swal.fire(
-                                            'Deleted!',
-                                            'Your city has been deleted.',
-                                            'success'
-                                            ).then(() => {
-                                        location.reload();  // ✅ Page refresh karega list update karne ke liye
-                                    });
-                                } else {
-                                    Swal.fire(
-                                            'Error!',
-                                            'Something went wrong.',
-                                            'error'
-                                            );
-                                }
-                            })
-                            .catch(error => {
-                                console.error("Error:", error);
-                                Swal.fire(
-                                        'Error!',
-                                        'Failed to connect to server.',
-                                        'error'
-                                        );
-                            });
-                }
         </script>
+
     </head>
-    <body onload="go2()">
+    <body onload="getdata()">
         <!-- start preloader area -->
         <div id="preloader">
             <div class="loader"><span></span></div>
@@ -179,73 +70,92 @@
         <!-- end preloader area -->
 
         <!-- start header area -->
-        <div th:replace="AdminNavbar :: header"></div>
-
+        <div th:replace="OwnerNavbar :: header"></div>
         <!-- end header area -->
 
         <!-- start page title area-->
         <div class="page-title-area">
             <div class="container">
                 <div class="page-title-content">
-                    <h1>Register</h1>
+                    <h1>Edit Package/Service</h1>
                     <ul>
                         <li class="item"><a href="index.html">Home</a></li>
-                        <li class="item active"><span></span>Register</li>
+                        <li class="item active"><span></span>Shop</li>
                     </ul>
                 </div>
             </div>
             <div class="bg-image">
-                <img src="assets/images/page-title/register.jpg" alt="Demo Image">
+                <img src="assets/images/page-title/product-details.jpg" alt="Demo Image">
             </div>
         </div>
         <!-- end page title area -->
 
-        <!-- start authentication area -->
-        <div class="authentication-section">
+        <!-- start product details area -->
+        <div id="product-details" class="product-details-area ptb-100 pb-70">
             <div class="container">
-                <div class="main-form ptb-100">
-                    <form id="#authForm">
-                        <div class="form-group">
-                            <label for="cityname">City Name</label>
-                            <input type="text" id="cityname" class="form-control" placeholder="Enter City Name" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="desc">City Description</label>
+                <div class="row">
+                    <div class="col-lg-6 col-md-12">
+                        <div class="product-image-container mb-30">
+                            <div class="product-single-slider popup-gallery owl-carousel">
+                                <div class="image" id="photo5">
+                                    
+                                        <img  src="assets/images/product/zoom/product-lg-1.jpg"  alt="Demo Image">
+                                   
+                                    <button type="button" class="primary-btn" onclick="login()">
+                                        Sign In
+                                    </button>
+                                </div>
 
-                            <textarea id="desc" name="desc" rows="5" cols="10" class="form-control" placeholder="Enter City Description"></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label for="photo">City Photo</label>
-                            <input type="file" id="photo" class="form-control" placeholder="Select photo" required>
-                        </div>
 
-                        <div class="row align-items-start mb-30">
+                            </div>
 
                         </div>
-                        <button type="button" onclick="enterdata()" class="primary-btn">
-                            Add City
-                        </button>
+                    </div>
 
-                    </form>
+                    <div class="col-lg-6 col-md-12">
+                        <!--                        <h2 class="title">Edit Package</h2>-->
+                        <div class="authentication-section">
+                            <div class="container">
+
+                                <div class="main-form ptb-100">
+                                    <form id="#authForm">
+
+                                        <div class="form-group">
+                                            <label for="pname">Package/Service Name</label>
+                                            <input type="text" id="pname" class="form-control" placeholder="Rename Your  Package/Service" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="desc">Description</label>
+                                            <textarea id="desc" name="desc" rows="5" cols="10" class="form-control" placeholder="Package/Service description "></textarea>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="price">Updated Price*</label>
+                                            <input type="text" id="price" class="form-control" placeholder="new price!" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="offerprice">Updated Offer Price*</label>
+                                            <input type="text" id="offerprice" class="form-control" placeholder="new offer price!" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="type1">Type*</label>
+                                            <input type="text" id="type1" class="form-control" placeholder="Change Type!" required>
+                                        </div>
+
+                                        <button type="button" class="primary-btn" onclick="login()">
+                                            Sign In
+                                        </button>
+
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>
-        <!-- end authentication section -->
+        
 
-        
-         <br/>
-        <br/>
-        <div class="sf-contact-form3-wrap">
-            <div class="sf-con-form-title text-center">
-                <h2 class="m-b30">Already Added Cities</h2>
-            </div>
-        </div>
-        <div class="container">
-            <div id="d1"></div> 
-
-        </div>
-        
-        
         <!-- start footer area -->
         <footer class="footer-area">
             <div class="container">
@@ -358,6 +268,23 @@
         </footer>
         <!-- end footer area -->
 
+        <!-- start add cart modal -->
+        <div class="modal fade" id="addCartModal" tabindex="-1" role="dialog" aria-labelledby="addCartModal" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-body add-cart-box text-center">
+                        <p>You've just added this product to the cart</p>
+                        <img src="assets/images/product/product-md1.png" id="productImage" width="100" height="100" alt="Demo Image">
+                        <div class="btn-actions">
+                            <a href="cart.html" class="primary-btn">Go to cart</a>
+                            <a href="#" role="button" class="primary-btn" data-dismiss="modal">Continue</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- start add cart modal -->
+
         <!--=== start go to top area ===-->
         <div class='go-top'>
             <i class='bx bx-upvote'></i>
@@ -380,5 +307,5 @@
         <script src="assets/js/script.js"></script>
     </body>
 
-    <!-- Mirrored from templates.hibootstrap.com/wofy/default/register.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 26 Jan 2025 08:45:55 GMT -->
+    <!-- Mirrored from templates.hibootstrap.com/wofy/default/product-details.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 26 Jan 2025 08:46:44 GMT -->
 </html>

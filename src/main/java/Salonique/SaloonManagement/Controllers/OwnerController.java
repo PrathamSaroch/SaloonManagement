@@ -26,4 +26,14 @@ public class OwnerController {
     {
         return "OwnerManagePackage";
     }
+    @GetMapping("/EditPackage")
+    public String editpackagepage()
+    {
+        return "OwnerEditPackage";
+    }
+    @GetMapping("/AddPhotos")
+    public String addphotobyownerpage()
+    {
+        return "OwnerManagePhoto";
+    }
 }
