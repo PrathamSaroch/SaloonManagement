@@ -80,10 +80,8 @@ public class UserRestController {
             return ex.toString();
         }
     }
-    
-    
-    
-     @GetMapping("userShowSaloonPhotos")
+
+    @GetMapping("userShowSaloonPhotos")
     public String userShowSaloonPhotos(@RequestParam String ownerid) {
         try {
             String ans = new RDBMS_TO_JSON().generateJSON("select * from shopphotos where ownerid= " + ownerid + " ");
@@ -223,6 +221,43 @@ public class UserRestController {
                     + "JOIN user u ON r.userid = u.userid "
                     + "WHERE r.ownerid = '" + ownerid + "'"
             );
+            return ans;
+        } catch (Exception ex) {
+            return ex.toString();
+        }
+    }
+
+    @PostMapping("/UChangePassword")
+    public String UChangePassword(HttpSession session, @RequestParam String opass, @RequestParam String npass) {
+        String ans = "";
+
+        try {
+            int userid = (int) session.getAttribute("userid");
+            ResultSet rs = Database.executeQuery("select * from user where upassword='" + opass + "' and userid='" + userid + "'");
+            if (rs.next()) {
+
+                rs.updateString("upassword", npass);
+                rs.updateRow();
+
+                session.removeAttribute("userid");
+                return "success";
+            } else {
+                return "fail";
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return "exception";
+        }
+    }
+
+    @GetMapping("UShowBookigHistory")
+    public String UShowBookigHistory(HttpSession session) {
+        try {
+            int userid = (int) session.getAttribute("userid");
+            String ans = new RDBMS_TO_JSON().generateJSON("select * from booking where userid= '"+userid+"' ");
+
+            System.out.println(ans);
+
             return ans;
         } catch (Exception ex) {
             return ex.toString();

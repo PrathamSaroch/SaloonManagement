@@ -69,4 +69,28 @@ public class UserController {
     public String UserSignup() {
         return "UserSignup";
     }
+    
+    @GetMapping("/UserChangePassword")
+    public String UserChangePassword(HttpSession session) {
+        
+        Integer userid = (Integer) session.getAttribute("userid");
+
+        if (userid == null || userid == 0) {
+            return "redirect:/UserLogin";
+        }
+        
+        return "UserChangePassword";
+    }
+    
+        @GetMapping("/UserShowBookingHistory")
+    public String UserShowBookingHostory(HttpSession session) {
+        
+        Integer userid = (Integer) session.getAttribute("userid");
+
+        if (userid == null || userid == 0) {
+            return "redirect:/UserLogin";
+        }
+        
+        return "UserShowBookingHistory";
+    }
 }

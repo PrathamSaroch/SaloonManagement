@@ -143,7 +143,7 @@
                 document.getElementById("ownerem").innerHTML = "<i class='flaticon point'></i>Owner Email : " + saloons[0].owneremail;
 
                 document.getElementById("ownerem2").innerHTML = "<i class='bx bx-check-circle' ></i>Owner Email : " + saloons[0].owneremail;
-                
+
 
                 document.getElementById("ownerph").src = "myuploads/" + saloons[0].ownerphoto;
 
@@ -153,7 +153,7 @@
 //                document.getElementById("mainph2").innerhref = "myuploads/" + saloons[0].shopphoto;
 //                document.getElementById("mainph").style.height = "499px";
 //                document.getElementById("mainph2").style.height = "499px";
-                
+
                 document.getElementById("shoptime").innerHTML = "<i class='flaticon point'></i>Shop Timings : " + saloons[0].starttime + "&nbsp to &nbsp" + saloons[0].endtime;
                 document.getElementById("totalexp").innerHTML = "<i class='flaticon point'></i>Total Experience : " + saloons[0].experience + " years";
 
@@ -187,25 +187,24 @@
                 padding: 0;
                 margin: 0;
             }
-            
-            .product-single-slider img {
-    height: 500px;
-    object-fit: cover; /* Ensure image maintains aspect ratio */
-    width: 100%; /* Maintain responsiveness */
-}
 
-.owl-dot img {
-    height: 100px; /* Adjust thumbnail height */
-    width: auto; /* Maintain aspect ratio */
-    object-fit: cover;
-}
+            .product-single-slider img {
+                height: 500px;
+                object-fit: cover; /* Ensure image maintains aspect ratio */
+                width: 100%; /* Maintain responsiveness */
+            }
+
+            .owl-dot img {
+                height: 100px; /* Adjust thumbnail height */
+                width: auto; /* Maintain aspect ratio */
+                object-fit: cover;
+            }
 
 
         </style>
-        
+
         <script>
-            function UserShowAllPhotos()
-            {
+            function UserShowAllPhotos(){
                 // Get the current URL
                 const currentUrl = new URL(window.location.href);
 
@@ -224,60 +223,60 @@
                         .then(ans => renderSaloonPhotos(ans))
                         .catch(error => console.error('Error fetching saloons:', error));
             }
-            
-function renderSaloonPhotos(ans) {
-    ans = ans.trim();
-    var mainobj = JSON.parse(ans);
-    const saloons = mainobj["ans"];
 
-    console.log("Photos", saloons);
+            function renderSaloonPhotos(ans) {
+                ans = ans.trim();
+                var mainobj = JSON.parse(ans);
+                const saloons = mainobj["ans"];
 
-    let sliderContainer = document.querySelector(".product-single-slider");
-    let dotsContainer = document.getElementById("owl-custom-dots");
+                console.log("Photos", saloons);
 
-    // Clear previous content
-    sliderContainer.innerHTML = "";
-    dotsContainer.innerHTML = "";
+                let sliderContainer = document.querySelector(".product-single-slider");
+                let dotsContainer = document.getElementById("owl-custom-dots");
 
-    // Append images dynamically
-    saloons.forEach((saloon, index) => {
-        let imageDiv = document.createElement("div");
-        imageDiv.classList.add("image");
-        imageDiv.innerHTML = `
+                // Clear previous content
+                sliderContainer.innerHTML = "";
+                dotsContainer.innerHTML = "";
+
+                // Append images dynamically
+                saloons.forEach((saloon, index) => {
+                    let imageDiv = document.createElement("div");
+                    imageDiv.classList.add("image");
+                    imageDiv.innerHTML = `
             <a href="myuploads/${saloon.photo}">
                 <img src="myuploads/${saloon.photo}" alt="Saloon Image">
             </a>
         `;
-        sliderContainer.appendChild(imageDiv);
+                    sliderContainer.appendChild(imageDiv);
 
-        let dotDiv = document.createElement("div");
-        dotDiv.classList.add("col-3", "owl-dot");
-        if (index === 0) dotDiv.classList.add("active"); // First image should be active
-        dotDiv.innerHTML = `<img src="myuploads/${saloon.photo}" alt="Saloon Thumbnail">`;
-        dotsContainer.appendChild(dotDiv);
-    });
+                    let dotDiv = document.createElement("div");
+                    dotDiv.classList.add("col-3", "owl-dot");
+                    if (index === 0)
+                        dotDiv.classList.add("active"); // First image should be active
+                    dotDiv.innerHTML = `<img src="myuploads/${saloon.photo}" alt="Saloon Thumbnail">`;
+                    dotsContainer.appendChild(dotDiv);
+                });
 
-    // Re-initialize Owl Carousel
-    $(".product-single-slider").owlCarousel("destroy"); // Destroy old instance
-    $(".product-single-slider").owlCarousel({
-        items: 1,
-        loop: true,
-        nav: false,
-        dots: false,
-        autoplay: true,
-        autoplayTimeout: 3000,
-        autoplayHoverPause: true,
-    });
-}
-
+                // Re-initialize Owl Carousel
+                $(".product-single-slider").owlCarousel("destroy"); // Destroy old instance
+                $(".product-single-slider").owlCarousel({
+                    items: 1,
+                    loop: true,
+                    nav: false,
+                    dots: false,
+                    autoplay: true,
+                    autoplayTimeout: 3000,
+                    autoplayHoverPause: true,
+                });
+            }
         </script>
 
     </head>
     <body onload="UserShowSaloonDetail();
             UserShowSaloonPackage();
             userShowRatings();
-              UserShowAllPhotos()" >
-        
+            UserShowAllPhotos()" >
+
         <!-- start preloader area -->
         <div id="preloader">
             <div class="loader"><span></span></div>
@@ -1044,14 +1043,14 @@ function renderSaloonPhotos(ans) {
 
             }
 
-function renderAsHtml4(ans) {
-    var mainobj = JSON.parse(ans);
-    var arr = mainobj.ans;
-    var ren = "";
-    for (var i = 0; i < arr.length; i++) {
-        var st = arr[i];
+            function renderAsHtml4(ans) {
+                var mainobj = JSON.parse(ans);
+                var arr = mainobj.ans;
+                var ren = "";
+                for (var i = 0; i < arr.length; i++) {
+                    var st = arr[i];
 
-        ren += `<div class="col-12">
+                    ren += `<div class="col-12">
                     <div class="card mb-30">
                         <div class="image">
                             <img src="myuploads/${st.uphoto || 'assets/images/default-user.jpg'}" alt="User Image">
@@ -1062,28 +1061,28 @@ function renderAsHtml4(ans) {
                                 <h3 class="title">${st.uname || "Anonymous"}</h3>
                                 <div class="review">`;
 
-        // Adding filled stars
-        for (var j = 0; j < (st.rating || 0); j++) {
-            ren += `<img width="25px;" height="25px;" src="filled_star.png" ></img>`;
-        }
+                    // Adding filled stars
+                    for (var j = 0; j < (st.rating || 0); j++) {
+                        ren += `<img width="25px;" height="25px;" src="filled_star.png" ></img>`;
+                    }
 
-        // Adding empty stars (if rating is less than 5)
-        for (var j = (st.rating || 0); j < 5; j++) {
-            ren += `<img width="25px;" height="25px;" src="empty_star.png" ></img>`;
-        }
+                    // Adding empty stars (if rating is less than 5)
+                    for (var j = (st.rating || 0); j < 5; j++) {
+                        ren += `<img width="25px;" height="25px;" src="empty_star.png" ></img>`;
+                    }
 
-        ren += `        </div>
+                    ren += `        </div>
                             </div>
                             <p class="text">${st.review || "No comment provided."}</p>
                         </div>
                     </div>
                 </div>`;
-    }
-    
-    console.log(ren)
+                }
 
-    document.querySelector(".all-reviews .row").innerHTML = ren;
-}
+                console.log(ren)
+
+                document.querySelector(".all-reviews .row").innerHTML = ren;
+            }
 
 
         </script>
