@@ -143,15 +143,17 @@
                 document.getElementById("ownerem").innerHTML = "<i class='flaticon point'></i>Owner Email : " + saloons[0].owneremail;
 
                 document.getElementById("ownerem2").innerHTML = "<i class='bx bx-check-circle' ></i>Owner Email : " + saloons[0].owneremail;
-                document.getElementById("mainph").src = "myuploads/" + saloons[0].shopphoto;
+                
 
                 document.getElementById("ownerph").src = "myuploads/" + saloons[0].ownerphoto;
 
                 document.getElementById("ownerph").style.height = "180px";
 
-                document.getElementById("mainph2").innerhref = "myuploads/" + saloons[0].shopphoto;
-                document.getElementById("mainph").style.height = "499px";
-                document.getElementById("mainph2").style.height = "499px";
+//                document.getElementById("mainph").src = "myuploads/" + saloons[0].shopphoto;
+//                document.getElementById("mainph2").innerhref = "myuploads/" + saloons[0].shopphoto;
+//                document.getElementById("mainph").style.height = "499px";
+//                document.getElementById("mainph2").style.height = "499px";
+                
                 document.getElementById("shoptime").innerHTML = "<i class='flaticon point'></i>Shop Timings : " + saloons[0].starttime + "&nbsp to &nbsp" + saloons[0].endtime;
                 document.getElementById("totalexp").innerHTML = "<i class='flaticon point'></i>Total Experience : " + saloons[0].experience + " years";
 
@@ -185,13 +187,97 @@
                 padding: 0;
                 margin: 0;
             }
+            
+            .product-single-slider img {
+    height: 500px;
+    object-fit: cover; /* Ensure image maintains aspect ratio */
+    width: 100%; /* Maintain responsiveness */
+}
+
+.owl-dot img {
+    height: 100px; /* Adjust thumbnail height */
+    width: auto; /* Maintain aspect ratio */
+    object-fit: cover;
+}
+
 
         </style>
+        
+        <script>
+            function UserShowAllPhotos()
+            {
+                // Get the current URL
+                const currentUrl = new URL(window.location.href);
+
+                // Extract query parameters
+                const params = new URLSearchParams(currentUrl.search);
+
+                // Access specific parameters
+                const ownerid = params.get('ownerid');
+
+                // Create a query string for the GET request
+                const endpointUrl = `./userShowSaloonPhotos?ownerid=${encodeURIComponent(ownerid)}`;
+
+                // Perform the GET request
+                fetch(endpointUrl, {method: "GET"})
+                        .then(response => response.text())
+                        .then(ans => renderSaloonPhotos(ans))
+                        .catch(error => console.error('Error fetching saloons:', error));
+            }
+            
+function renderSaloonPhotos(ans) {
+    ans = ans.trim();
+    var mainobj = JSON.parse(ans);
+    const saloons = mainobj["ans"];
+
+    console.log("Photos", saloons);
+
+    let sliderContainer = document.querySelector(".product-single-slider");
+    let dotsContainer = document.getElementById("owl-custom-dots");
+
+    // Clear previous content
+    sliderContainer.innerHTML = "";
+    dotsContainer.innerHTML = "";
+
+    // Append images dynamically
+    saloons.forEach((saloon, index) => {
+        let imageDiv = document.createElement("div");
+        imageDiv.classList.add("image");
+        imageDiv.innerHTML = `
+            <a href="myuploads/${saloon.photo}">
+                <img src="myuploads/${saloon.photo}" alt="Saloon Image">
+            </a>
+        `;
+        sliderContainer.appendChild(imageDiv);
+
+        let dotDiv = document.createElement("div");
+        dotDiv.classList.add("col-3", "owl-dot");
+        if (index === 0) dotDiv.classList.add("active"); // First image should be active
+        dotDiv.innerHTML = `<img src="myuploads/${saloon.photo}" alt="Saloon Thumbnail">`;
+        dotsContainer.appendChild(dotDiv);
+    });
+
+    // Re-initialize Owl Carousel
+    $(".product-single-slider").owlCarousel("destroy"); // Destroy old instance
+    $(".product-single-slider").owlCarousel({
+        items: 1,
+        loop: true,
+        nav: false,
+        dots: false,
+        autoplay: true,
+        autoplayTimeout: 3000,
+        autoplayHoverPause: true,
+    });
+}
+
+        </script>
 
     </head>
     <body onload="UserShowSaloonDetail();
             UserShowSaloonPackage();
-            userShowRatings()" >
+            userShowRatings();
+              UserShowAllPhotos()" >
+        
         <!-- start preloader area -->
         <div id="preloader">
             <div class="loader"><span></span></div>
@@ -227,8 +313,8 @@
                         <div class="product-image-container mb-30">
                             <div class="product-single-slider popup-gallery owl-carousel">
                                 <div class="image">
-                                    <a id="mainph2" href="assets/images/product/zoom/product-lg-1.jpg">
-                                        <img id="mainph" src="assets/images/product/zoom/product-lg-1.jpg" alt="Demo Image">
+                                    <a  href="assets/images/product/zoom/product-lg-1.jpg">
+                                        <img  src="assets/images/product/zoom/product-lg-1.jpg" alt="Demo Image">
                                     </a>
                                 </div>
                                 <div class="image">

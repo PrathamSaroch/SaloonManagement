@@ -80,6 +80,21 @@ public class UserRestController {
             return ex.toString();
         }
     }
+    
+    
+    
+     @GetMapping("userShowSaloonPhotos")
+    public String userShowSaloonPhotos(@RequestParam String ownerid) {
+        try {
+            String ans = new RDBMS_TO_JSON().generateJSON("select * from shopphotos where ownerid= " + ownerid + " ");
+
+            System.out.println(ans);
+
+            return ans;
+        } catch (Exception ex) {
+            return ex.toString();
+        }
+    }
 
     @PostMapping("/booking")
     public String addBookingDetails(HttpSession session, @RequestParam String customername,
