@@ -55,7 +55,7 @@
                     document.getElementById("type1").value = ct.type;
                    var a = `<div class="image"><img  src="myuploads/${ct.packagephoto}" alt="Demo Image"><button type="button" class="primary-btn" onclick="login()">Sign In</button></div>`;
 
-                    document.getElementById("photo5").innerHTML=  a;
+                    document.getElementById("photo5").src ="myuploads/"+  ct.packagephoto;
 //                    document.getElementById("photo1").href = ct.packagephoto;
                 }
             }
@@ -89,17 +89,17 @@
             </div>
         </div>
         <!-- end page title area -->
-
+        
         <!-- start product details area -->
         <div id="product-details" class="product-details-area ptb-100 pb-70">
             <div class="container">
                 <div class="row">
                     <div class="col-lg-6 col-md-12">
                         <div class="product-image-container mb-30">
-                            <div class="product-single-slider popup-gallery owl-carousel">
-                                <div class="image" id="photo5">
+                            <div class="">
+                                <div class="image" >
                                     
-                                        <img  src="assets/images/product/zoom/product-lg-1.jpg"  alt="Demo Image">
+                                        <img id="photo5" src="assets/images/product/zoom/product-lg-1.jpg"  alt="Demo Image">
                                    
                                     <button type="button" class="primary-btn" onclick="login()">
                                         Sign In
