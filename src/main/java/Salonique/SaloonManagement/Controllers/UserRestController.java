@@ -240,6 +240,8 @@ public class UserRestController {
                 rs.updateRow();
 
                 session.removeAttribute("userid");
+                session.removeAttribute("uname");
+                        
                 return "success";
             } else {
                 return "fail";
