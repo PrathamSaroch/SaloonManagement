@@ -85,7 +85,9 @@ public class OwnerRestController {
             ResultSet rs = Database.executeQuery("select * from owner where owneremail='" + uname + "' and ownerpass='" + password + "'");
             if (rs.next()) {
                 int id1 = rs.getInt("ownerid");
+                String oname = rs.getString("ownername");
                 session.setAttribute("ownerid", id1);
+                session.setAttribute("ownername", oname);
                 return "success";
             } else {
                 return "fail";
@@ -271,5 +273,31 @@ public class OwnerRestController {
         return null;
 
     }
+    
+    
+        @PostMapping("/OChangePassword")
+    public String OChangePassword(HttpSession session, @RequestParam String opass, @RequestParam String npass) {
+        String ans = "";
+
+        try {
+            int userid = (int) session.getAttribute("ownerid");
+            ResultSet rs = Database.executeQuery("select * from owner where ownerpass='" + opass + "' and ownerid='" + userid + "'");
+            if (rs.next()) {
+
+                rs.updateString("ownerpass", npass);
+                rs.updateRow();
+
+                session.removeAttribute("ownerid");
+                session.removeAttribute("ownername");
+                return "success";
+            } else {
+                return "fail";
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return "exception";
+        }
+    }
+
 
 }
