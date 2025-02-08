@@ -9,9 +9,14 @@ import Salonique.SaloonManagement.Connection.*;
 import jakarta.servlet.http.HttpSession;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
 public class OwnerRestController {
@@ -73,8 +78,8 @@ public class OwnerRestController {
 
     @PostMapping("/OwnerLogin1")
     public String ownerlogin(@RequestParam String uname,
-             @RequestParam String password,
-             HttpSession session) {
+            @RequestParam String password,
+            HttpSession session) {
         try {
 
             ResultSet rs = Database.executeQuery("select * from owner where owneremail='" + uname + "' and ownerpass='" + password + "'");
@@ -93,12 +98,12 @@ public class OwnerRestController {
 
     @PostMapping("/AddPackage")
     public String addnewpackage(@RequestParam String packagename,
-             @RequestParam String packagedesc,
-             @RequestParam MultipartFile packagephoto,
-             @RequestParam String price,
-             @RequestParam String offerprice,
-             HttpSession session,
-             @RequestParam String type) {
+            @RequestParam String packagedesc,
+            @RequestParam MultipartFile packagephoto,
+            @RequestParam String price,
+            @RequestParam String offerprice,
+            HttpSession session,
+            @RequestParam String type) {
 
         try {
             ResultSet rs = Database.executeQuery("select * from packages where packagename='" + packagename + "'");
@@ -187,22 +192,19 @@ public class OwnerRestController {
             return "success";
         } catch (Exception ex) {
             ex.printStackTrace();
-           return "exception";
+            return "exception";
         }
     }
+
     @PostMapping("/deletephoto")
-    public String deletephoto(@RequestParam String id)
-    {
+    public String deletephoto(@RequestParam String id) {
         try {
-            int id1=Integer.parseInt(id);
-            ResultSet rs=Database.executeQuery("select * from shopphotos where photoid='"+id1+"'");
-            if(rs.next())
-            {
+            int id1 = Integer.parseInt(id);
+            ResultSet rs = Database.executeQuery("select * from shopphotos where photoid='" + id1 + "'");
+            if (rs.next()) {
                 rs.deleteRow();
                 return "success";
-            }
-            else
-            {
+            } else {
                 return "fail";
             }
         } catch (Exception ex) {
@@ -210,11 +212,64 @@ public class OwnerRestController {
             return "exception";
         }
     }
+
     @GetMapping("/showphotos")
-    public String getallphotos(HttpSession session)
-    {
+    public String getallphotos(HttpSession session) {
         Integer oid = (Integer) session.getAttribute("ownerid");
-        String ans=new RDBMS_TO_JSON().generateJSON("select * from shopphotos where ownerid='"+oid+"'");
+        String ans = new RDBMS_TO_JSON().generateJSON("select * from shopphotos where ownerid='" + oid + "'");
         return ans;
     }
+
+    @GetMapping("/OShowBookings")
+    public String OShowBookings(HttpSession session) {
+        Integer oid = (Integer) session.getAttribute("ownerid");
+
+        // Query to fetch bookings for a specific owner
+        String query = "SELECT b.bookingid, b.status, b.username, b.useremail, b.address, b.bookingdate, b.bookingtime, b.modeofpayment "
+                + "FROM booking b "
+                + "JOIN packages p ON b.packageid = p.packageid "
+                + "WHERE p.ownerid = " + oid;
+
+        String ans = new RDBMS_TO_JSON().generateJSON(query);
+        return ans;
+    }
+
+    @PostMapping("/UpdateBookingStatus")
+    public String UpdateBookingStatus(@RequestBody Map<String, Object> requestData) {
+        System.out.println("Booking ID: " + requestData.get("bookingId"));
+        System.out.println("New Status: " + requestData.get("status"));
+
+        int bookingId = (int) requestData.get("bookingId");
+        String status = (String) requestData.get("status");
+        status = status.trim();
+        System.out.println(status);
+        try {
+
+            if (status.equalsIgnoreCase("Pending")) {
+                System.out.println("in if");
+                ResultSet rs = Database.executeQuery("select * from booking where bookingid= '" + bookingId + "' ");
+                if (rs.next()) {
+                    rs.updateString("status", "Approve");
+                    rs.updateRow();
+                    
+                    return "success";
+                }
+            } else {
+                System.out.println("in else");
+                 ResultSet rs = Database.executeQuery("select * from booking where bookingid= '" + bookingId + "' ");
+                if (rs.next()) {
+                    rs.updateString("status", "Pending");
+                    rs.updateRow();
+                    
+                    return "success";
+                }
+            }
+
+        } catch (Exception ex) {
+           return ex.toString();
+        }
+        return null;
+
+    }
+
 }
