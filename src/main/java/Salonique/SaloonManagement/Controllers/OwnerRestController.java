@@ -62,7 +62,7 @@ public class OwnerRestController {
                 rs.updateInt("cityid", cid);
                 rs.updateString("latitude", latitude);
                 rs.updateString("longitude", longitude);
-                rs.updateString("status", "pending");
+                rs.updateString("status", "Pending");
                 rs.updateString("starttime", stime);
                 rs.updateString("endtime", etime);
                 rs.updateString("experience", experience);

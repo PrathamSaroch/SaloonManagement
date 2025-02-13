@@ -32,7 +32,8 @@ public class UserRestController {
     @GetMapping("userShowAllSaloons")
     public String userShowSaloons(@RequestParam String cityid) {
         try {
-            String ans = new RDBMS_TO_JSON().generateJSON("select * from owner where cityid= " + cityid + " ");
+            String s = "Approve";
+            String ans = new RDBMS_TO_JSON().generateJSON("select * from owner where cityid= " + cityid + " and status = '"+s+"'  ");
 
             System.out.println(ans);
 
