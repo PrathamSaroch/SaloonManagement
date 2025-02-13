@@ -70,6 +70,7 @@ function renderAsHtml(ans) {
                     <th style="padding: 10px; border: 1px solid #dee2e6;">Booking Date</th>
                     <th style="padding: 10px; border: 1px solid #dee2e6;">Booking Time</th>
                     <th style="padding: 10px; border: 1px solid #dee2e6;">Payment Mode</th>
+        <th style="padding: 10px; border: 1px solid #dee2e6;">Booking Status</th>
                 </tr>
             </thead>
             <tbody>
@@ -86,6 +87,7 @@ function renderAsHtml(ans) {
                 <td style="padding: 10px; border: 1px solid #dee2e6;">${booking.bookingdate}</td>
                 <td style="padding: 10px; border: 1px solid #dee2e6;">${booking.bookingtime}</td>
                 <td style="padding: 10px; border: 1px solid #dee2e6;">${booking.modeofpayment}</td>
+            <td style="padding: 10px; border: 1px solid #dee2e6;">${booking.status}</td>
             </tr>
         `;
     });

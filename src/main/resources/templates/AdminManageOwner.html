@@ -100,7 +100,8 @@
                                     confirmButtonColor: '#d33',
                                 }).then((result) => {
                     if (result.isConfirmed) {
-                        window.location.reload();
+                        go2();
+                        go3();
                     }
                 });
                                 
@@ -154,7 +155,7 @@
                     s = s + "<td>" + ct.shopdesc + "</td>";
                     s = s + "<td>" + ct.experience + "</td>";
                     s = s + '<td><img src="' + a + '" class=\"img-thumbnail\" height=\"100ox\" width=\"100px\" /> </td>';
-                    s += "<td><button class='btn btn-success btn-lg' onclick=\"confirmBlock('" + ct.ownerid + "')\">Approve</button></td>";
+                    s += "<td><button class='btn btn-danger btn-lg' onclick=\"confirmBlock('" + ct.ownerid + "')\">Block</button></td>";
                     s = s + "</tr>";
                 }
 
@@ -194,7 +195,8 @@
                                     confirmButtonColor: '#d33',
                                 }).then((result) => {
                     if (result.isConfirmed) {
-                        window.location.reload();
+                        go2();
+                        go3();
                     }
                 });
                                 

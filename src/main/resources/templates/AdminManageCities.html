@@ -51,7 +51,9 @@
                         title: 'City Added Successful',
                         text: 'You have successfully Added City!!',
                         showConfirmButton: true,
-                    });
+                    }).then(() => {
+                                        go2();  // ✅ Page refresh karega list update karne ke liye
+                                    });
 
                     document.getElementById("cityname").value = "";
                     document.getElementById("desc").value = "";
@@ -150,7 +152,7 @@
                                             'Your city has been deleted.',
                                             'success'
                                             ).then(() => {
-                                        location.reload();  // ✅ Page refresh karega list update karne ke liye
+                                        go2();  // ✅ Page refresh karega list update karne ke liye
                                     });
                                 } else {
                                     Swal.fire(
@@ -187,10 +189,10 @@
         <div class="page-title-area">
             <div class="container">
                 <div class="page-title-content">
-                    <h1>Register</h1>
+                    <h1>Manage Cities</h1>
                     <ul>
                         <li class="item"><a href="index.html">Home</a></li>
-                        <li class="item active"><span></span>Register</li>
+                        <li class="item active"><span></span>Manage Cities</li>
                     </ul>
                 </div>
             </div>

@@ -53,13 +53,16 @@
             }
             function renderAsHtml(ans)
             {
-
-
-
                 if (ans === "success")
                 {
-                    alert("New Package Added");
-                    location.reload();
+                     Swal.fire(
+                                            'Success!!!!',
+                                            'Added Successfully',
+                                            'success'
+                                            ).then(() => {
+                                        go2();  // ✅ Page refresh karega list update karne ke liye
+                                    });
+                                    
 
 
                 } else if (ans === "fail")
@@ -108,9 +111,9 @@
                     s = s + "<td>" + ct.packagedesc + "</td>";
                     s = s + '<td><img src="myuploads/' + ct.packagephoto + '" class=\"img-thumbnail\" height=\"100px\" width=\"100px\" /> </td>';
 
-                    s += "<td><button class='btn btn-warning btn-sm' onclick=\"openeditpage('" + ct.packageid + "')\">Edit</button></td>";
+                    s += "<td><button class='btn btn-primary btn-sm' onclick=\"openeditpage('" + ct.packageid + "')\">Edit</button></td>";
 
-                    s += "<td><button class='btn btn-warning btn-sm' onclick=\"confirmDelete('" + ct.packageid + "')\">Delete</button></td>";
+                    s += "<td><button class='btn btn-danger btn-sm' onclick=\"confirmDelete('" + ct.packageid + "')\">Delete</button></td>";
 
                     s = s + "</tr>";
                 }

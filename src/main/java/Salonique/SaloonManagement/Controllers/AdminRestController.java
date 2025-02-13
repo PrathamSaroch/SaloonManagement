@@ -89,11 +89,20 @@ public class AdminRestController {
     {
         //SELECT o.*, c.cityname FROM owner o JOIN cities c ON o.cityid = c.cityid WHERE o.status = 'approved';
 
-        String status="approved";
-         String ans=new RDBMS_TO_JSON().generateJSON("SELECT o.*, c.cityname FROM owner o JOIN cities c ON o.cityid = c.cityid WHERE o.status = 'pending'");
+        String status="Approve";
+         String ans=new RDBMS_TO_JSON().generateJSON("SELECT o.*, c.cityname FROM owner o JOIN cities c ON o.cityid = c.cityid WHERE o.status = 'Pending'");
         return ans;
     }
     
+        @GetMapping("/ApprovedOwners")
+    public String ApprovedOwners()
+    {
+        //SELECT o.*, c.cityname FROM owner o JOIN cities c ON o.cityid = c.cityid WHERE o.status = 'approved';
+
+        String status="Approve";
+         String ans=new RDBMS_TO_JSON().generateJSON("SELECT o.*, c.cityname FROM owner o JOIN cities c ON o.cityid = c.cityid WHERE o.status = 'Approve'");
+        return ans;
+    }
     
     @PostMapping("/ApproveOwner")
     public String approve(@RequestParam String oid)
@@ -104,7 +113,7 @@ public class AdminRestController {
             if(rs.next())
             {
                 rs.moveToCurrentRow();
-                rs.updateString("status", "approved");
+                rs.updateString("status", "Approve");
                 rs.updateRow();
                 return "success";
             }
@@ -126,7 +135,7 @@ public class AdminRestController {
             if(rs.next())
             {
                 rs.moveToCurrentRow();
-                rs.updateString("status", "pending");
+                rs.updateString("status", "Pending");
                 rs.updateRow();
                 return "success";
             }
