@@ -8,6 +8,7 @@ public class SaloonManagementApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(SaloonManagementApplication.class, args);
+                
 	}
 
 }

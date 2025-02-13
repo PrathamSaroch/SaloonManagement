@@ -23,5 +23,9 @@ public class AdminController {
         return "AdminManageCities";
     }
     
-    
+    @GetMapping("/ManageOwners")
+    public String manageownerpage()
+    {
+        return "AdminManageOwner";
+    }
 }

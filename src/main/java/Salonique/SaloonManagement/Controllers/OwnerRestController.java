@@ -73,8 +73,8 @@ public class OwnerRestController {
 
     @PostMapping("/OwnerLogin1")
     public String ownerlogin(@RequestParam String uname,
-             @RequestParam String password,
-             HttpSession session) {
+            @RequestParam String password,
+            HttpSession session) {
         try {
 
             ResultSet rs = Database.executeQuery("select * from owner where owneremail='" + uname + "' and ownerpass='" + password + "'");
@@ -93,12 +93,12 @@ public class OwnerRestController {
 
     @PostMapping("/AddPackage")
     public String addnewpackage(@RequestParam String packagename,
-             @RequestParam String packagedesc,
-             @RequestParam MultipartFile packagephoto,
-             @RequestParam String price,
-             @RequestParam String offerprice,
-             HttpSession session,
-             @RequestParam String type) {
+            @RequestParam String packagedesc,
+            @RequestParam MultipartFile packagephoto,
+            @RequestParam String price,
+            @RequestParam String offerprice,
+            HttpSession session,
+            @RequestParam String type) {
 
         try {
             ResultSet rs = Database.executeQuery("select * from packages where packagename='" + packagename + "'");
@@ -187,22 +187,19 @@ public class OwnerRestController {
             return "success";
         } catch (Exception ex) {
             ex.printStackTrace();
-           return "exception";
+            return "exception";
         }
     }
+
     @PostMapping("/deletephoto")
-    public String deletephoto(@RequestParam String id)
-    {
+    public String deletephoto(@RequestParam String id) {
         try {
-            int id1=Integer.parseInt(id);
-            ResultSet rs=Database.executeQuery("select * from shopphotos where photoid='"+id1+"'");
-            if(rs.next())
-            {
+            int id1 = Integer.parseInt(id);
+            ResultSet rs = Database.executeQuery("select * from shopphotos where photoid='" + id1 + "'");
+            if (rs.next()) {
                 rs.deleteRow();
                 return "success";
-            }
-            else
-            {
+            } else {
                 return "fail";
             }
         } catch (Exception ex) {
@@ -210,11 +207,54 @@ public class OwnerRestController {
             return "exception";
         }
     }
+
     @GetMapping("/showphotos")
-    public String getallphotos(HttpSession session)
-    {
+    public String getallphotos(HttpSession session) {
         Integer oid = (Integer) session.getAttribute("ownerid");
-        String ans=new RDBMS_TO_JSON().generateJSON("select * from shopphotos where ownerid='"+oid+"'");
+        String ans = new RDBMS_TO_JSON().generateJSON("select * from shopphotos where ownerid='" + oid + "'");
         return ans;
+    }
+
+    @PostMapping("/editpackage2")
+    public String editpackage(@RequestParam String name,
+             @RequestParam String desc,
+             @RequestParam String price,
+             @RequestParam String offerprice,
+             @RequestParam MultipartFile photo,
+             @RequestParam String pid,
+             HttpSession session) {
+        String oname=photo.getOriginalFilename();
+        System.out.println("*************************func start");
+        Integer oid = (Integer) session.getAttribute("ownerid");
+        try {
+            int pid1 = Integer.parseInt(pid);
+            ResultSet rs = Database.executeQuery("select * from packages where packageid='" + pid1 + "'");
+            if (rs.next()) {
+                System.out.println("++++++++++++++++++++++++++++++++if mai huu");
+                rs.moveToCurrentRow();
+                rs.updateInt("ownerid", oid);
+                
+                rs.updateString("packagename", name);
+                rs.updateString("packagedesc", desc);
+                rs.updateString("price", price);
+                
+                rs.updateString("offerprice", offerprice);
+                byte b[] = photo.getBytes();
+                String abspath = "src/main/resources/static/myuploads/";
+                FileOutputStream fos = new FileOutputStream(abspath + oname);
+                fos.write(b);
+                rs.updateString("packagephoto", oname);
+                rs.updateRow();
+                return "success";
+            }
+            else
+            {
+                System.out.println("---------------else mai huu");
+                return "fail";
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return "exception";
+        }
     }
 }

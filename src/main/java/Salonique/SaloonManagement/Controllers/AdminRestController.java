@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.RestController;
 import Salonique.SaloonManagement.Connection.*;
 import jakarta.servlet.annotation.MultipartConfig;
 import java.io.FileOutputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -81,5 +83,60 @@ public class AdminRestController {
             return "exception";
         }
             
+    }
+    @GetMapping("/PendingOwners")
+    public String pendingownerslist()
+    {
+        //SELECT o.*, c.cityname FROM owner o JOIN cities c ON o.cityid = c.cityid WHERE o.status = 'approved';
+
+        String status="approved";
+         String ans=new RDBMS_TO_JSON().generateJSON("SELECT o.*, c.cityname FROM owner o JOIN cities c ON o.cityid = c.cityid WHERE o.status = 'pending'");
+        return ans;
+    }
+    
+    
+    @PostMapping("/ApproveOwner")
+    public String approve(@RequestParam String oid)
+    {
+        try {
+            int oid1=Integer.parseInt(oid);
+            ResultSet rs=Database.executeQuery("select * from owner where ownerid='"+oid1+"'");
+            if(rs.next())
+            {
+                rs.moveToCurrentRow();
+                rs.updateString("status", "approved");
+                rs.updateRow();
+                return "success";
+            }
+            else
+            {
+                return "fail";
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return "exception";
+        }
+    }
+      @PostMapping("/BlockOwner")
+    public String block(@RequestParam String oid)
+    {
+        try {
+            int oid1=Integer.parseInt(oid);
+            ResultSet rs=Database.executeQuery("select * from owner where ownerid='"+oid1+"'");
+            if(rs.next())
+            {
+                rs.moveToCurrentRow();
+                rs.updateString("status", "pending");
+                rs.updateRow();
+                return "success";
+            }
+            else
+            {
+                return "fail";
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return "exception";
+        }
     }
 }
