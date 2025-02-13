@@ -9,9 +9,14 @@ import Salonique.SaloonManagement.Connection.*;
 import jakarta.servlet.http.HttpSession;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
 public class OwnerRestController {
@@ -80,7 +85,9 @@ public class OwnerRestController {
             ResultSet rs = Database.executeQuery("select * from owner where owneremail='" + uname + "' and ownerpass='" + password + "'");
             if (rs.next()) {
                 int id1 = rs.getInt("ownerid");
+                String oname = rs.getString("ownername");
                 session.setAttribute("ownerid", id1);
+                session.setAttribute("oname",oname);
                 return "success";
             } else {
                 return "fail";
@@ -213,6 +220,58 @@ public class OwnerRestController {
         Integer oid = (Integer) session.getAttribute("ownerid");
         String ans = new RDBMS_TO_JSON().generateJSON("select * from shopphotos where ownerid='" + oid + "'");
         return ans;
+    }
+
+    @GetMapping("/OShowBookings")
+    public String OShowBookings(HttpSession session) {
+        Integer oid = (Integer) session.getAttribute("ownerid");
+
+        // Query to fetch bookings for a specific owner
+        String query = "SELECT b.bookingid, b.status, b.username, b.useremail, b.address, b.bookingdate, b.bookingtime, b.modeofpayment "
+                + "FROM booking b "
+                + "JOIN packages p ON b.packageid = p.packageid "
+                + "WHERE p.ownerid = " + oid;
+
+        String ans = new RDBMS_TO_JSON().generateJSON(query);
+        return ans;
+    }
+
+    @PostMapping("/UpdateBookingStatus")
+    public String UpdateBookingStatus(@RequestBody Map<String, Object> requestData) {
+        System.out.println("Booking ID: " + requestData.get("bookingId"));
+        System.out.println("New Status: " + requestData.get("status"));
+
+        int bookingId = (int) requestData.get("bookingId");
+        String status = (String) requestData.get("status");
+        status = status.trim();
+        System.out.println(status);
+        try {
+
+            if (status.equalsIgnoreCase("Pending")) {
+                System.out.println("in if");
+                ResultSet rs = Database.executeQuery("select * from booking where bookingid= '" + bookingId + "' ");
+                if (rs.next()) {
+                    rs.updateString("status", "Approve");
+                    rs.updateRow();
+                    
+                    return "success";
+                }
+            } else {
+                System.out.println("in else");
+                 ResultSet rs = Database.executeQuery("select * from booking where bookingid= '" + bookingId + "' ");
+                if (rs.next()) {
+                    rs.updateString("status", "Pending");
+                    rs.updateRow();
+                    
+                    return "success";
+                }
+            }
+
+        } catch (Exception ex) {
+           return ex.toString();
+        }
+        return null;
+
     }
 
     @PostMapping("/editpackage2")

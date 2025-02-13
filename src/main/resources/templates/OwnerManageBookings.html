@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
-    
-<!-- Mirrored from templates.hibootstrap.com/wofy/default/login.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 26 Jan 2025 08:45:52 GMT -->
-<head>
+
+    <!-- Mirrored from templates.hibootstrap.com/wofy/default/register.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 26 Jan 2025 08:45:54 GMT -->
+    <head>
         <!--=== meta tags ===-->
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -15,86 +15,173 @@
         <link rel="stylesheet" href="assets/css/animate.min.css" />
         <link rel="stylesheet" href="assets/css/nice-select.css" />
         <link rel="stylesheet" href="assets/css/magnific-popup.min.css" />
-		<link rel="stylesheet" href="assets/css/owl.carousel.min.css" />
+        <link rel="stylesheet" href="assets/css/owl.carousel.min.css" />
         <link rel="stylesheet" href="assets/css/meanmenu.min.css" />
         <link rel="stylesheet" href="assets/css/style.css" />
         <link rel="stylesheet" href="assets/css/responsive.css" />
         <link rel="stylesheet" href="assets/css/theme-dark.css" />
 
-        <!--=== title & favicon ===-->
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <title>Wofy - Beauty Saloon & Spa Massage Center HTML Template</title>
         <link rel="icon" href="assets/images/favicon.png" type="image/png"/>
-         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-       
+        <script>
+
+            function OwnerShowBookings()
+            {
+                var url = "./OShowBookings";
+
+                fetch(url, {method: "GET"})
+                        .then(response => response.text())
+                        .then(ans => renderAsHtml(ans));
+            }
+
+            function renderAsHtml(ans) {
+                ans = ans.trim();
+                var mainobj = JSON.parse(ans);
+                const bookings = mainobj["ans"];
+
+                console.log(bookings); // Debugging: Check fetched data
+
+                // Get the target container
+                const container = document.querySelector(".main-form");
+
+                // Clear previous content
+                container.innerHTML = "";
+
+                if (bookings.length === 0) {
+                    container.innerHTML = "<p>No booking history found.</p>";
+                    return;
+                }
+
+                // Add heading
+                container.innerHTML = `<h2 style="text-align: center; color: #ffcc00; margin-bottom: 20px;">Your Past Bookings</h2>`;
+
+                // Create table structure
+                let tableHTML = `
+        <table class="table table-bordered" style="width: 100%; border-collapse: collapse; font-family: Arial, sans-serif; background-color: #343a40; color: #f8f9fa;">
+            <thead style="background-color: #495057; color: #ffcc00;">
+                <tr>
+                    <th style="padding: 10px; border: 1px solid #dee2e6;">Booking ID</th>
+                    <th style="padding: 10px; border: 1px solid #dee2e6;">Name</th>
+                    <th style="padding: 10px; border: 1px solid #dee2e6;">Email</th>
+                    <th style="padding: 10px; border: 1px solid #dee2e6;">Address</th>
+                    <th style="padding: 10px; border: 1px solid #dee2e6;">Booking Date</th>
+                    <th style="padding: 10px; border: 1px solid #dee2e6;">Booking Time</th>
+                    <th style="padding: 10px; border: 1px solid #dee2e6;">Payment Mode</th>
+                    <th style="padding: 10px; border: 1px solid #dee2e6;">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
+
+                // Append rows dynamically
+                bookings.forEach(booking => {
+                    const isApproved = booking.status === "Approve"; // Assuming `status` field indicates payment status
+                    const buttonHTML = `
+            <button style="padding: 5px 10px; border: none; border-radius: 5px; color: #fff; background-color: ${isApproved ? "#dc3545" : "#28a745"};" 
+                    onclick="changeStatus(${booking.bookingid}, '${booking.status}')">
+                ${isApproved ? "Pending" : "Approve"}
+            </button>
+        `;
+
+                    tableHTML += `
+            <tr>
+                <td style="padding: 10px; border: 1px solid #dee2e6;">${booking.bookingid}</td>
+                <td style="padding: 10px; border: 1px solid #dee2e6;">${booking.username}</td>
+                <td style="padding: 10px; border: 1px solid #dee2e6;">${booking.useremail}</td>
+                <td style="padding: 10px; border: 1px solid #dee2e6;">${booking.address}</td>
+                <td style="padding: 10px; border: 1px solid #dee2e6;">${booking.bookingdate}</td>
+                <td style="padding: 10px; border: 1px solid #dee2e6;">${booking.bookingtime}</td>
+                <td style="padding: 10px; border: 1px solid #dee2e6;">${booking.modeofpayment}</td>
+                <td style="padding: 10px; border: 1px solid #dee2e6; text-align: center;">${buttonHTML}</td>
+            </tr>
+        `;
+                });
+
+                tableHTML += `</tbody></table>`;
+
+                // Inject into the container
+                container.innerHTML += tableHTML;
+            }
+
+// Function to handle status change
+            function changeStatus(bookingId, newStatus) {
+                const url = "./UpdateBookingStatus"; // Update with your backend endpoint
+
+                // Prepare request body
+                const data = {
+                    bookingId: bookingId,
+                    status: newStatus
+                };
+
+                // Make an AJAX request to the backend
+                fetch(url, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(data)
+                })
+                        .then(response => response.text()) // Since backend returns plain text, not JSON
+                        .then(result => {
+                            if (result.trim() === "success") {  // Check if response is "success"
+                                // Refresh the booking list to reflect changes
+                                OwnerShowBookings();
+                            } else {
+                                alert("Failed to update status. Please try again.\nError: " + result);
+                            }
+                        })
+                        .catch(error => {
+                            console.error("Error:", error);
+                            alert("An error occurred while updating the status.");
+                        });
+            }
+
+
+
+        </script>
     </head>
-    <body>
+    <body onload="OwnerShowBookings()">
         <!-- start preloader area -->
         <div id="preloader">
             <div class="loader"><span></span></div>
         </div>
-        <!-- end preloader area -->
 
-		<!-- start header area -->
         <div th:replace="OwnerNavbar :: header"></div>
 
         <!-- end header area -->
 
-
-         <div class="page-title-area">-
+        <!-- start page title area-->
+        <div class="page-title-area">
             <div class="container">
                 <div class="page-title-content">
-                    <h1>Welcome Owner</h1>
+                    <h1>New Service</h1>
                     <ul>
                         <li class="item"><a href="index.html">Home</a></li>
-                        <li class="item active"><span></span>Owner Home</li>
+                        <li class="item active"><span></span>Register</li>
                     </ul>
                 </div>
             </div>
             <div class="bg-image">
-                <img src="assets/images/page-title/login.jpg" alt="Demo Image">
+                <img src="assets/images/page-title/register.jpg" alt="Demo Image">
             </div>
         </div>
-        
-        
-        <div class="row shorting">
-                    <div class="grid-item col-sm-12 col-md-6 col-lg-4 mix hair">
-                        <div class="card mb-30">
-                            <div class="image">
-                                <img src="myuploads/managepackage1.jpg" alt="Demo Image">
-                            </div>
-                            <div class="content">
-                                <h3 class="title"><a href="/ManagePackage">Manage Package</a></h3>
-                                <p class="text">Manage All the Package/Services of the Saloon.</p>
-                                <a href="/ManagePackage" class="primary-btn">View Details</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="grid-item col-sm-12 col-md-6 col-lg-4 mix hair">
-                        <div class="card mb-30">
-                            <div class="image">
-                                <img src="myuploads/Manage_Bookings_Button.jpg" alt="Demo Image">
-                            </div>
-                            <div class="content">
-                                <h3 class="title"><a href="/OwnerManageBookings">Manage Owners </a></h3>
-                                <p class="text">Approve or deny the Owners of the Saloons.</p>
-                                <a href="/OwnerManageBookings" class="primary-btn">View Details</a>
-                            </div>
-                        </div>
-                    </div>
-                   <div class="grid-item col-sm-12 col-md-6 col-lg-4 mix hair">
-                        <div class="card mb-30">
-                            <div class="image">
-                                <img src="myuploads/Manage_Photos_Button.jpg" alt="Demo Image">
-                            </div>
-                            <div class="content">
-                                <h3 class="title"><a href="/AddPhotos">Add Saloon Photos</a></h3>
-                                <p class="text">Add/Update all your saloon pictures.</p>
-                                <a href="/AddPhotos" class="primary-btn">View Details</a>
-                            </div>
-                        </div>
-                    </div>
+        <!-- end page title area -->
 
-                </div> 
+
+
+        <br/>
+        <br/>
+        <!-- start authentication area -->
+        <div class="authentication-section">
+            <div class="container">
+                <div class="main-form ptb-100">
+
+                </div>
+            </div>
+        </div>
+        <!-- end authentication section -->
+
 
         <!-- start footer area -->
         <footer class="footer-area">
@@ -197,7 +284,7 @@
                 <div class="copy-right-area border-top">
                     <div class="copy-right-content">
                         <span>
-                           Copyright @<script>document.write(new Date().getFullYear())</script> Wofy. Designed By
+                            Copyright @<script>document.write(new Date().getFullYear())</script> Wofy. Designed By
                             <a href="https://hibootstrap.com/" target="_blank">
                                 HiBootstrap.com
                             </a>
@@ -208,9 +295,6 @@
         </footer>
         <!-- end footer area -->
 
-        
-        
-        
         <!--=== start go to top area ===-->
         <div class='go-top'>
             <i class='bx bx-upvote'></i>
@@ -231,7 +315,7 @@
         <script src="assets/js/contact-form-script.js"></script>
         <script src="assets/js/jquery.ajaxchimp.min.js"></script>
         <script src="assets/js/script.js"></script>
-	</body>
+    </body>
 
-<!-- Mirrored from templates.hibootstrap.com/wofy/default/login.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 26 Jan 2025 08:45:54 GMT -->
+    <!-- Mirrored from templates.hibootstrap.com/wofy/default/register.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 26 Jan 2025 08:45:55 GMT -->
 </html>
