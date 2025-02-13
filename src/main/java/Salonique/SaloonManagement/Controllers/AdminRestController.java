@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import Salonique.SaloonManagement.Connection.*;
 import jakarta.servlet.annotation.MultipartConfig;
+import jakarta.servlet.http.HttpSession;
 import java.io.FileOutputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -16,10 +17,11 @@ import org.springframework.web.multipart.MultipartFile;
 public class AdminRestController {
 
     @PostMapping("/AdminLogin1")
-    public String adminlogindetails(@RequestParam String uname, @RequestParam String password) {
+    public String adminlogindetails(@RequestParam String uname, @RequestParam String password, HttpSession session) {
         try {
             ResultSet rs = Database.executeQuery("select * from admin where User='" + uname + "' and Password='" + password + "'");
             if (rs.next()) {
+                session.setAttribute("aname", uname);
                 return "success";
             } else {
                 return "fail";
